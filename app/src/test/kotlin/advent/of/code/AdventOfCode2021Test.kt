@@ -4,7 +4,8 @@
 package advent.of.code
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 import java.io.BufferedReader
 import java.io.FileReader
 
@@ -12,29 +13,27 @@ class AdventOfCode2021Test {
     private val adventOfCode2021 = AdventOfCode2021()
 
     @Nested
-    inner class DayOne {
+    inner class Day1 {
+        @Test
+        fun `Should count the number of times a depth measurement increases`() {
+            val report = listOf(199, 200, 208, 210, 200, 207, 240, 269, 260, 263)
 
+            val increaseCounter = adventOfCode2021.countingDepthMeasurementIncreases(report)
+
+            assertThat(increaseCounter).isEqualTo(7)
+        }
+
+        @Test
+        fun `Should count the number of times a depth measurement increases given a bigger puzzle`() {
+            val filePath = "src/test/resources/day1"
+            val depthMeasurements =
+                BufferedReader(FileReader("$filePath/puzzleInput.txt")).lines().map { it.toInt() }.toList()
+
+            val increaseCounter = adventOfCode2021.countingDepthMeasurementIncreases(depthMeasurements)
+
+            assertThat(increaseCounter).isEqualTo(1713)
+        }
     }
-
-   @Test
-   fun `Should count the number of times a depth measurement increases`(){
-       val  report = listOf(199, 200, 208, 210, 200, 207, 240, 269, 260, 263)
-
-       val increaseCounter = adventOfCode2021.countingDepthMeasurementIncreases(report)
-
-       assertThat(increaseCounter).isEqualTo(7)
-   }
-
-    @Test
-    fun `Should count the number of times a depth measurement increases given a bigger puzzle`(){
-        val filePath = "src/test/resources/day1"
-        val depthMeasurements = BufferedReader(FileReader("$filePath/puzzleInput.txt")).lines().map { it.toInt() }.toList()
-
-        val increaseCounter = adventOfCode2021.countingDepthMeasurementIncreases(depthMeasurements)
-
-        assertThat(increaseCounter).isEqualTo(1713)
-    }
-
 
 
 }
