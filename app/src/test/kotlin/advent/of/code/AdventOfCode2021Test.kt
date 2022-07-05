@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.io.BufferedReader
 import java.io.FileReader
+import kotlin.math.max
 
 class AdventOfCode2021Test {
     private val adventOfCode2021 = AdventOfCode2021()
@@ -32,6 +33,87 @@ class AdventOfCode2021Test {
             val increaseCounter = adventOfCode2021.countingDepthMeasurementIncreases(depthMeasurements)
 
             assertThat(increaseCounter).isEqualTo(1713)
+        }
+
+        @Test
+        fun `_Prod_ should count the number of times the sum of measurements in a sliding window increases`() {
+            val filePath = "src/test/resources/day1"
+            val report =
+                BufferedReader(FileReader("$filePath/puzzleInput.txt")).lines().map { it.toInt() }.toList()
+
+            val slidingWindowData = adventOfCode2021.makeListOfThreeSlidingWindowData(report, 3)
+            val totalMeasuresIncrease = adventOfCode2021.countingDepthMeasurementIncreases(slidingWindowData)
+
+            assertThat(totalMeasuresIncrease).isEqualTo(1734)
+
+        }
+
+        @Test
+        fun `_example_ Should count the number of times the sum of measurements in a sliding window increases`() {
+            val report = listOf(199, 200, 208, 210, 200, 207, 240, 269, 260, 263)
+
+            val slidingWindowData = adventOfCode2021.makeListOfThreeSlidingWindowData(report, 3)
+            val totalMeasuresIncrease = adventOfCode2021.countingDepthMeasurementIncreases(slidingWindowData)
+
+            assertThat(totalMeasuresIncrease).isEqualTo(5)
+
+        }
+
+        @Test
+        fun `_example_ count the number of times the sum of measurements in this sliding window increases`() {
+            val measurements: Map<Char, List<Int>> = mapOf(
+                'A' to listOf(199, 200, 208),
+                'B' to listOf(200, 208, 210),
+                'C' to listOf(208, 210, 200),
+                'D' to listOf(210, 200, 207),
+                'E' to listOf(200, 207, 240),
+                'F' to listOf(207, 240, 269),
+                'G' to listOf(240, 269, 260),
+                'H' to listOf(269, 260, 263),
+            )
+
+
+            val numberOfIncrease = adventOfCode2021.countingIncresalOfMeasurements(measurements)
+            assertThat(numberOfIncrease).isEqualTo(5)
+        }
+
+        @Test
+        fun `_example_ Should build a list of sums based on a three-measurement sliding window technique`() {
+            val report = listOf(199, 200, 208, 210, 200, 207, 240, 269, 260, 263)
+            val k = 3
+
+            val slidingWindowData = adventOfCode2021.makeListOfThreeSlidingWindowData(report, k)
+
+            assertThat(slidingWindowData).isEqualTo(listOf(607, 618, 618, 617, 647, 716, 769, 792))
+        }
+
+        @Nested
+        inner class SlidingWindowTechnique {
+
+            @Test
+            fun `Should find the maximum of tha subarray of size K with brute force mechanism`() {
+                val myArray = listOf(1, 4, 2, 10, 2, 3, 1, 0, 20)
+                val k = 4
+                val maxSum = findMaxSumOfArrayWithBruteForce(myArray, k)
+
+                assertThat(maxSum).isEqualTo(24)
+
+            }
+
+            private fun findMaxSumOfArrayWithBruteForce(myArray: List<Int>, k: Int): Int {
+                var maxSum = Integer.MIN_VALUE
+                val sizeOfArray = myArray.size
+                for (i in 0..sizeOfArray - k + 1) {
+                    var currentSum = 0
+                    var j = 0
+                    while (j < k && i + j < sizeOfArray) {
+                        currentSum += myArray[i + j]
+                        maxSum = max(currentSum, maxSum)
+                        j++
+                    }
+                }
+                return maxSum
+            }
         }
     }
 

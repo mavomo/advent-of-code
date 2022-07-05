@@ -16,6 +16,34 @@ class AdventOfCode2021 {
         }
         return increaseCounter
     }
+
+    fun countingIncresalOfMeasurements(measurementsBySlidingWindow: Map<Char, List<Int>>): Int {
+        val sumByWindow: Map<Char, Int> = measurementsBySlidingWindow.entries.associate { it.key to it.value.sum() }
+        var numberOfIncrease = 0
+        var previousValue = sumByWindow.entries.iterator().next()
+        sumByWindow.entries.filterNot { it.key == previousValue.key }
+            .forEach {
+                if (it.value > previousValue.value) {
+                    numberOfIncrease++
+                }
+                previousValue = it
+            }
+        return numberOfIncrease
+    }
+
+    fun makeListOfThreeSlidingWindowData(measures: List<Int>, chunk: Int): MutableList<Int> {
+        val listWithSum = mutableListOf<Int>()
+        val maxSum = measures.subList(0, chunk).sum()
+        listWithSum.add(maxSum)
+        var i = chunk
+        var windowSum = maxSum
+        while (i < measures.size) {
+            windowSum += measures[i] - measures[i - chunk]
+            listWithSum.add(windowSum)
+            i++
+        }
+        return listWithSum
+    }
 }
 
 
