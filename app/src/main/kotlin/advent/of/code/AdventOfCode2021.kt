@@ -44,6 +44,25 @@ class AdventOfCode2021 {
         }
         return listWithSum
     }
+
+    fun getSubmarinPosition(instructions: List<String>): Pair<Int, Int> {
+        var horizontal = 0
+        var depth = 0
+
+        instructions.forEach {
+            val instruction = it.split(" ")
+            val command = instruction[0]
+            val distance = instruction[1].toInt()
+            when (command) {
+                "forward" -> horizontal += distance
+                "down" -> depth += distance
+                "up" -> depth -= distance
+            }
+        }
+        return Pair(depth, horizontal)
+    }
+
+
 }
 
 

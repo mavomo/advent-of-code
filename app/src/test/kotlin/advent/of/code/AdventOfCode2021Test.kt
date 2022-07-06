@@ -117,5 +117,40 @@ class AdventOfCode2021Test {
         }
     }
 
+    @Nested
+    inner class Day2 {
+        @Test
+        fun `Example_ move under water `() {
+            val instructions = listOf(
+                "forward 5",
+                "down 5",
+                "forward 8",
+                "up 3",
+                "down 8",
+                "forward 2"
+            )
+
+            val pair = adventOfCode2021.getSubmarinPosition(instructions)
+
+            assertThat(pair.second).isEqualTo(15)
+            assertThat(pair.first).isEqualTo(10)
+            assertThat(pair.second.times(pair.first)).isEqualTo(150)
+        }
+
+        @Test
+        fun `Production__ do move under water`(){
+            val filePath = "src/test/resources/day2"
+            val instructions = BufferedReader(FileReader("$filePath/puzzleInput.txt")).lines().map { it }.toList()
+            val pair = adventOfCode2021.getSubmarinPosition(instructions)
+
+            assertThat(pair.second).isEqualTo(1817)
+            assertThat(pair.first).isEqualTo(1072)
+            assertThat(pair.second.times(pair.first)).isEqualTo(1947824)
+
+        }
+
+
+    }
+
 
 }
