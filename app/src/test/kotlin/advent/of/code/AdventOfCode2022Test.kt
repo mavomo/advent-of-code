@@ -1,9 +1,6 @@
 package advent.of.code
 
 import org.assertj.core.api.Assertions
-import org.assertj.core.data.MapEntry
-import org.checkerframework.checker.units.qual.A
-import org.checkerframework.checker.units.qual.C
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.io.BufferedReader
@@ -76,22 +73,22 @@ class AdventOfCode2022Test {
 
     @Nested
     inner class Day2 {
-        val scoresByShape = mapOf(
+        private val scoresByShape = mapOf(
             Shape.ROCK to 1,
             Shape.PAPER to 2,
             Shape.SCISSORS to 3
         )
-        val myScoreByRoundResult = mapOf(
+        private val myScoreByRoundResult = mapOf(
             ODD.DRAW to 3,
             ODD.VICTORY to 6,
             ODD.DEFEAT to 0
         )
-        val shapesByOpponent: Map<Char, Shape> =  mapOf(
+        private val shapesByOpponent: Map<Char, Shape> =  mapOf(
             'A' to Shape.ROCK,
             'B' to Shape.PAPER,
             'C' to Shape.SCISSORS
         )
-        val myShapesCombination: Map<Char, Shape> = mapOf(
+        private val myShapesCombination: Map<Char, Shape> = mapOf(
             'X' to Shape.ROCK,
             'Y' to Shape.PAPER,
             'Z' to Shape.SCISSORS
@@ -107,25 +104,76 @@ class AdventOfCode2022Test {
         )
 
         @Test
-        fun `_sample_ paper beats rock given with score of 8`(){
+        fun `_sample_ I play paper against rock and I should win with a score of 8`(){
             val round1 = Pair('A', 'Y')
+            val pair = computeMyScoreForRound(round1)
+            val winningShape = pair.first
+            val myScore = pair.second
+
+            Assertions.assertThat(winningShape).isEqualTo(Shape.PAPER)
+            Assertions.assertThat(myScore).isEqualTo(8)
+        }
+
+        @Test
+        fun `_sample_ I play Rock against Paper and I loose  with a score of 1`(){
+            val round = Pair('B', 'X')
+            val pair = computeMyScoreForRound(round)
+            val winningShape = pair.first
+            val myScore = pair.second
+
+            Assertions.assertThat(winningShape).isEqualTo(Shape.PAPER)
+            Assertions.assertThat(myScore).isEqualTo(1)
+        }
+
+        @Test
+        fun `_sample_ we both Scissors thus nobody wins and I have a score of 6`(){
+            val round = Pair('C', 'Z')
+            val pair = computeMyScoreForRound(round)
+            val winningShape = pair.first
+            val myScore = pair.second
+            Assertions.assertThat(winningShape).isEqualTo(Shape.SCISSORS)
+            Assertions.assertThat(myScore).isEqualTo(6)
+        }
+
+        @Test
+        fun `_sample_ should compute my total score if everything goes according to my strategy guide`(){
+            val allRounds = listOf(
+                Pair('A', 'Y'),
+                Pair('B', 'X'),
+                Pair('C', 'Z'),
+            )
+            val scores = mutableListOf<Int>()
+            allRounds.forEach {
+              val myScoreThisRound = computeMyScoreForRound(it)
+                scores.add(myScoreThisRound.second)
+            }
+            Assertions.assertThat(scores.sum()).isEqualTo(15)
+        }
+
+        private fun computeMyScoreForRound(round1: Pair<Char, Char>): Pair<Shape?, Int> {
             val opponentShape: Shape = shapesByOpponent[round1.first]!!
             val myShape: Shape = myShapesCombination[round1.second]!!
             val currentGame = Pair(opponentShape, myShape)
-            val winningShape = rules[currentGame]
-            var score= 0
-            if (winningShape == myShape){
-                val isSameShape = myShape === opponentShape
-                if(isSameShape) {
-                    score = myScoreByRoundResult[ODD.DRAW]!!
+            val winningShape : Shape;
+            var myScore = 0
+            if(opponentShape != myShape){
+                winningShape = rules[currentGame]!!
+                if (winningShape == myShape) {
+                    val isSameShape = myShape === opponentShape
+                    myScore = (if (isSameShape) myScoreByRoundResult[ODD.DRAW]!! else myScoreByRoundResult[ODD.VICTORY]!!)
+                    myScore += scoresByShape[winningShape]!!
                 }else {
-                    score = myScoreByRoundResult[ODD.VICTORY]!!
+                    myScore = myScoreByRoundResult[ODD.DEFEAT]!!
+                    myScore += scoresByShape[myShape]!!
                 }
-                score += scoresByShape[winningShape]!!
+            }else {
+                winningShape = myShape
+                myScore = myScoreByRoundResult[ODD.DRAW]!!
+                myScore += scoresByShape[myShape]!!
             }
-            Assertions.assertThat(winningShape).isEqualTo(Shape.PAPER)
-            Assertions.assertThat(score).isEqualTo(8)
+            return Pair(winningShape, myScore)
         }
+
     }
 
     enum class Shape {
