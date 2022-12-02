@@ -1,5 +1,8 @@
 package year_2022.day2
 
+import com.google.common.collect.ImmutableList
+import javax.annotation.concurrent.Immutable
+
 
 class RockPaperScissors {
     enum class Shape {
@@ -61,6 +64,15 @@ class RockPaperScissors {
             myScore += scoresByShape[myShape]!!
         }
         return Pair(winningShape, myScore)
+    }
+
+    fun computeMyScoreForAllRounds(allRounds: List<Pair<Char, Char>>): ImmutableList<Int> {
+        val scores = mutableListOf<Int>()
+        allRounds.forEach {
+            val myScoreThisRound = this.computeMyScoreForRound(it)
+            scores.add(myScoreThisRound.second)
+        }
+        return ImmutableList.copyOf(scores)
     }
 
 }
