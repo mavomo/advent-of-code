@@ -1,7 +1,6 @@
-package year_2022.day2
+package advent_of_code.year_2022.day2
 
 import com.google.common.collect.ImmutableList
-import javax.annotation.concurrent.Immutable
 
 
 class RockPaperScissors {
@@ -36,10 +35,10 @@ class RockPaperScissors {
     private val rules = mapOf(
         Pair(Shape.ROCK, Shape.SCISSORS) to Shape.ROCK,
         Pair(Shape.SCISSORS, Shape.ROCK) to Shape.ROCK,
+        Pair(Shape.SCISSORS, Shape.PAPER) to Shape.SCISSORS,
         Pair(Shape.PAPER, Shape.SCISSORS) to Shape.SCISSORS,
-        Pair(Shape.PAPER, Shape.SCISSORS) to Shape.SCISSORS,
-        Pair(Shape.ROCK, Shape.PAPER) to Shape.PAPER,
         Pair(Shape.PAPER, Shape.ROCK) to Shape.PAPER,
+        Pair(Shape.ROCK, Shape.PAPER) to Shape.PAPER,
     )
 
      fun computeMyScoreForRound(round1: Pair<Char, Char>): Pair<Shape?, Int> {
@@ -47,8 +46,8 @@ class RockPaperScissors {
         val myShape: Shape = myShapesCombination[round1.second]!!
         val currentGame = Pair(opponentShape, myShape)
         val winningShape : Shape;
-        var myScore = 0
-        if(opponentShape != myShape){
+         var myScore: Int
+         if(opponentShape != myShape){
             winningShape = rules[currentGame]!!
             if (winningShape == myShape) {
                 val isSameShape = myShape === opponentShape
@@ -69,7 +68,7 @@ class RockPaperScissors {
     fun computeMyScoreForAllRounds(allRounds: List<Pair<Char, Char>>): ImmutableList<Int> {
         val scores = mutableListOf<Int>()
         allRounds.forEach {
-            val myScoreThisRound = this.computeMyScoreForRound(it)
+            val myScoreThisRound = computeMyScoreForRound(it)
             scores.add(myScoreThisRound.second)
         }
         return ImmutableList.copyOf(scores)

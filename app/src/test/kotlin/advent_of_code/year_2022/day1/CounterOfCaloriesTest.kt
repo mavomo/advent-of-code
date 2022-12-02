@@ -1,4 +1,4 @@
-package year_2022.day1
+package advent_of_code.year_2022.day1
 
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Nested
