@@ -1,4 +1,4 @@
-package advent.of.code
+package advent_of_code
 
 class AdventOfCode2021 {
 
