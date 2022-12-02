@@ -1,6 +1,9 @@
 package advent.of.code
 
 import org.assertj.core.api.Assertions
+import org.assertj.core.data.MapEntry
+import org.checkerframework.checker.units.qual.A
+import org.checkerframework.checker.units.qual.C
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.io.BufferedReader
@@ -48,8 +51,6 @@ class AdventOfCode2022Test {
             Assertions.assertThat(totalCarriedByTopThreeElves).isEqualTo(212520)
         }
 
-
-
         private fun computeCaloriesCarriedByEachElf(caloriesMeasurements: List<String>): Map<Int, Int> {
             val allMeasurements = mutableMapOf<Int, Int>()
             var currentElfIndex = caloriesMeasurements.indexOfFirst { it.isEmpty() }.plus(1)
@@ -66,11 +67,76 @@ class AdventOfCode2022Test {
             }
             return allMeasurements
         }
+        private fun String.isLastElement(caloriesMeasurements: List<String>): Boolean {
+            val indexOfCurrentMeasure = caloriesMeasurements.indexOf(this)
+            val lastElement = caloriesMeasurements.indexOfLast { it.isNotEmpty() }
+            return indexOfCurrentMeasure==lastElement
+        }
     }
+
+    @Nested
+    inner class Day2 {
+        val scoresByShape = mapOf(
+            Shape.ROCK to 1,
+            Shape.PAPER to 2,
+            Shape.SCISSORS to 3
+        )
+        val myScoreByRoundResult = mapOf(
+            ODD.DRAW to 3,
+            ODD.VICTORY to 6,
+            ODD.DEFEAT to 0
+        )
+        val shapesByOpponent: Map<Char, Shape> =  mapOf(
+            'A' to Shape.ROCK,
+            'B' to Shape.PAPER,
+            'C' to Shape.SCISSORS
+        )
+        val myShapesCombination: Map<Char, Shape> = mapOf(
+            'X' to Shape.ROCK,
+            'Y' to Shape.PAPER,
+            'Z' to Shape.SCISSORS
+        )
+
+        private val rules = mapOf(
+            Pair(Shape.ROCK, Shape.SCISSORS) to Shape.ROCK,
+            Pair(Shape.SCISSORS, Shape.ROCK) to Shape.ROCK,
+            Pair(Shape.PAPER, Shape.SCISSORS) to Shape.SCISSORS,
+            Pair(Shape.PAPER, Shape.SCISSORS) to Shape.SCISSORS,
+            Pair(Shape.ROCK, Shape.PAPER) to Shape.PAPER,
+            Pair(Shape.PAPER, Shape.ROCK) to Shape.PAPER,
+        )
+
+        @Test
+        fun `_sample_ paper beats rock given with score of 8`(){
+            val round1 = Pair('A', 'Y')
+            val opponentShape: Shape = shapesByOpponent[round1.first]!!
+            val myShape: Shape = myShapesCombination[round1.second]!!
+            val currentGame = Pair(opponentShape, myShape)
+            val winningShape = rules[currentGame]
+            var score= 0
+            if (winningShape == myShape){
+                val isSameShape = myShape === opponentShape
+                if(isSameShape) {
+                    score = myScoreByRoundResult[ODD.DRAW]!!
+                }else {
+                    score = myScoreByRoundResult[ODD.VICTORY]!!
+                }
+                score += scoresByShape[winningShape]!!
+            }
+            Assertions.assertThat(winningShape).isEqualTo(Shape.PAPER)
+            Assertions.assertThat(score).isEqualTo(8)
+        }
+    }
+
+    enum class Shape {
+        ROCK, PAPER, SCISSORS
+    }
+
+    enum class ODD {
+        VICTORY, DEFEAT, DRAW
+    }
+
 }
 
-private fun String.isLastElement(caloriesMeasurements: List<String>): Boolean {
-    val indexOfCurrentMeasure = caloriesMeasurements.indexOf(this)
-    val lastElement = caloriesMeasurements.indexOfLast { it.isNotEmpty() }
-    return indexOfCurrentMeasure==lastElement
-}
+
+
