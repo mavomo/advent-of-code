@@ -120,7 +120,7 @@ class AdventOfCode2021Test {
     @Nested
     inner class Day2 {
         @Test
-        fun `Example_ move under water `() {
+        fun `Example_ move under water increases only the horizontal position and the depth`() {
             val instructions = listOf(
                 "forward 5",
                 "down 5",
@@ -138,7 +138,45 @@ class AdventOfCode2021Test {
         }
 
         @Test
-        fun `Production__ do move under water`(){
+        fun `Example2_ move under water increase the horizontal position, the depth and the aim `(){
+            var horizontal = 0
+            var depth = 0
+            var aim = 0
+
+            val instructions = listOf(
+                "forward 5",
+                "down 5",
+                "forward 8",
+                "up 3",
+                "down 8",
+                "forward 2"
+            )
+
+            instructions.forEach {
+                val instruction = it.split(" ")
+                val command = instruction[0]
+                val distance = instruction[1].toInt()
+                when(command){
+                    "forward" -> {
+                        horizontal += distance
+                        depth += aim.times(distance)
+                    }
+                    "down" -> {
+                        aim += distance
+                    }
+                    "up" -> {
+                        aim -= distance
+                    }
+                }
+            }
+
+            assertThat(horizontal).isEqualTo(15).`as`("resulted horizontal position is null")
+            assertThat(depth).isEqualTo(60)
+            assertThat(horizontal.times(depth)).isEqualTo(900)
+        }
+
+        @Test
+        fun `Production__ do move under water and return the horizontal position and the depth`(){
             val filePath = "src/test/resources/day2"
             val instructions = BufferedReader(FileReader("$filePath/puzzleInput.txt")).lines().map { it }.toList()
             val pair = adventOfCode2021.getSubmarinPosition(instructions)
@@ -146,7 +184,41 @@ class AdventOfCode2021Test {
             assertThat(pair.second).isEqualTo(1817)
             assertThat(pair.first).isEqualTo(1072)
             assertThat(pair.second.times(pair.first)).isEqualTo(1947824)
+        }
 
+        @Test
+        fun `Production_ do move under water but change the depth based on the aim`(){
+            val filePath = "src/test/resources/day2"
+            val instructions = BufferedReader(FileReader("$filePath/puzzleInput.txt")).lines().map { it }.toList()
+            val (horizontal, depth) = adjustMovesBasedOnTheAim(instructions)
+
+            assertThat(horizontal).isEqualTo(1817).`as`("resulted horizontal position is null")
+            assertThat(depth).isEqualTo(997833).`as`("The expected depth is wrong")
+            assertThat(horizontal.times(depth)).isEqualTo(1813062561)
+        }
+
+        private fun adjustMovesBasedOnTheAim(instructions: MutableList<String>): Pair<Int, Int> {
+            var horizontal = 0
+            var depth = 0
+            var aim = 0
+            instructions.forEach {
+                val instruction = it.split(" ")
+                val command = instruction[0]
+                val distance = instruction[1].toInt()
+                when (command) {
+                    "forward" -> {
+                        horizontal += distance
+                        depth += aim.times(distance)
+                    }
+                    "down" -> {
+                        aim += distance
+                    }
+                    "up" -> {
+                        aim -= distance
+                    }
+                }
+            }
+            return Pair(horizontal, depth)
         }
 
 
