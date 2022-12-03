@@ -32,18 +32,19 @@ class RockPaperScissors {
         'Z' to Shape.SCISSORS
     )
 
-    private val rules = mapOf(
-        Pair(Shape.ROCK, Shape.SCISSORS) to Shape.ROCK,
-        Pair(Shape.SCISSORS, Shape.ROCK) to Shape.ROCK,
-        Pair(Shape.SCISSORS, Shape.PAPER) to Shape.SCISSORS,
-        Pair(Shape.PAPER, Shape.SCISSORS) to Shape.SCISSORS,
-        Pair(Shape.PAPER, Shape.ROCK) to Shape.PAPER,
-        Pair(Shape.ROCK, Shape.PAPER) to Shape.PAPER,
+    private val endedRound: Map<Char, ODD> = mapOf(
+        'X' to ODD.DEFEAT,
+        'Y' to ODD.DRAW,
+        'Z' to ODD.VICTORY
     )
 
-     fun computeMyScoreForRound(round1: Pair<Char, Char>): Pair<Shape?, Int> {
-        val opponentShape: Shape = shapesByOpponent[round1.first]!!
-        val myShape: Shape = myShapesCombination[round1.second]!!
+
+
+     fun computeMyScoreForRound(
+         round: Pair<Char, Char>, rules: Map<Pair<Shape, Shape>, Shape>
+     ): Pair<Shape?, Int> {
+        val opponentShape: Shape = shapesByOpponent[round.first]!!
+        val myShape: Shape = myShapesCombination[round.second]!!
         val currentGame = Pair(opponentShape, myShape)
         val winningShape : Shape;
          var myScore: Int
@@ -65,10 +66,12 @@ class RockPaperScissors {
         return Pair(winningShape, myScore)
     }
 
-    fun computeMyScoreForAllRounds(allRounds: List<Pair<Char, Char>>): ImmutableList<Int> {
+    fun computeMyScoreForAllRounds(
+        allRounds: List<Pair<Char, Char>>, rules: Map<Pair<Shape, Shape>, Shape>
+    ): ImmutableList<Int> {
         val scores = mutableListOf<Int>()
         allRounds.forEach {
-            val myScoreThisRound = computeMyScoreForRound(it)
+            val myScoreThisRound = computeMyScoreForRound(it, rules)
             scores.add(myScoreThisRound.second)
         }
         return ImmutableList.copyOf(scores)
