@@ -121,6 +121,21 @@ internal class RockPaperScissorsTest {
 
                 Assertions.assertThat(myScore).isEqualTo(7)
             }
+
+            @Test
+            fun `_part_2_ should return the total score for the whole game`(){
+                val allRounds = listOf(
+                    Pair('A', 'Y'),
+                    Pair('B', 'X'),
+                    Pair('C', 'Z'),
+                )
+
+                val myScore = rockPaperScissors.computeMyGameScoreKnowingTheResult(allRounds, rules)
+
+                Assertions.assertThat(myScore).isEqualTo(12)
+
+            }
+
         }
 
 
@@ -138,6 +153,15 @@ internal class RockPaperScissorsTest {
         fun `_part1_ Should return the my total score if everything goes according to my strategy guide`() {
             val myScore = rockPaperScissors.computeMyScoreForAllRounds(allRounds, rules)
             Assertions.assertThat(myScore.sum()).isEqualTo(9651)
+        }
+
+        @Test
+        fun `part_2 should compute my score given the expected output of the round`(){
+
+            val myScore = rockPaperScissors.computeMyGameScoreKnowingTheResult(allRounds, rules)
+
+            Assertions.assertThat(myScore).isEqualTo(10560)
+
         }
 
 
