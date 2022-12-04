@@ -75,9 +75,7 @@ internal class RucsackReorganizationTest {
 
                 assertThat(totalPriorities).isEqualTo(70)
             }
-
         }
-
     }
 
     @Nested
