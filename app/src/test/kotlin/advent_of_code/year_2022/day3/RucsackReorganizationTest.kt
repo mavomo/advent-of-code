@@ -1,100 +1,106 @@
 package advent_of_code.year_2022.day3
 
+import com.google.common.collect.ImmutableList
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import java.io.BufferedReader
+import java.io.FileReader
 
 internal class RucsackReorganizationTest {
-    private val alphabetsInLowerCase = ('a'..'z').toSet()
-    private val alphabetsInUpperCase = ('A'..'Z').toSet()
 
-    @Test
-    fun `should find the common item in both compartments `() {
-        val contentOfFirstRucksack = "vJrwpWtwJgWrhcsFMMfFFhFp"
-        val contentOfSecondRucksack = "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL"
-        val contentOfThirdRucksack = "PmmdzqPrVvPwwTWBwg"
-        val contentOfFourthRucksack = "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn"
-        val contentOfFifthRucksack = "ttgJtRGJQctTZtZT"
-        val contentOfSixthRucksack = "CrZsJsPPZsGzwwsLwLmpwMDw"
+    private val rucsackReorganization = RucsackReorganization()
 
-        val commonItemInFirstRucksack = findCommonItems(contentOfFirstRucksack)
-        val commonItemInSecondRucksack = findCommonItems(contentOfSecondRucksack)
-        val commonItemInThirdRucksack = findCommonItems(contentOfThirdRucksack)
-        val commonItemInFourthRucksack = findCommonItems(contentOfFourthRucksack)
-        val commonItemInFifthRucksack = findCommonItems(contentOfFifthRucksack)
-        val commonItemInSithRucksack = findCommonItems(contentOfSixthRucksack)
+    @Nested
+    inner class Sample {
+        @Nested
+        inner class Part1 {
+            @Test
+            fun `Should count total priorities given their values`() {
+                val contentOfFirstRucksack = "vJrwpWtwJgWrhcsFMMfFFhFp"
+                val priorityValue = rucsackReorganization.computeSumOfAllPriorities(listOf(contentOfFirstRucksack))
 
-        assertThat(commonItemInFirstRucksack).containsOnly('p')
-        assertThat(commonItemInSecondRucksack).containsOnly('L')
-        assertThat(commonItemInThirdRucksack).containsOnly('P')
-        assertThat(commonItemInFourthRucksack).containsOnly('v')
-        assertThat(commonItemInFifthRucksack).containsOnly('t')
-        assertThat(commonItemInSithRucksack).containsOnly('s')
-    }
+                assertThat(priorityValue).isEqualTo(16)
+            }
 
-    @Test
-    fun `Should count total priorities given their values`() {
+            @Test
+            fun `Should find the value  of the sum of all the priroties by item type`() {
+                val sample = listOf(
+                    "vJrwpWtwJgWrhcsFMMfFFhFp",
+                    "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL",
+                    "PmmdzqPrVvPwwTWBwg",
+                    "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn",
+                    "ttgJtRGJQctTZtZT",
+                    "CrZsJsPPZsGzwwsLwLmpwMDw"
+                )
+                val sumOfPriorities = rucsackReorganization.computeSumOfAllPriorities(sample)
 
-        val lowercaseWithPriorities: Map<Char, Int> = alphabetsInLowerCase.mapIndexed { index, currentItem ->
-            Pair(currentItem, index + 1)
-        }.toMap()
+                assertThat(sumOfPriorities).isEqualTo(157)
+            }
 
-        var initialIdx = 26
-        val uppercaseWithPriorities: Map<Char, Int> = alphabetsInUpperCase.map { currrentItem ->
-            initialIdx++
-            Pair(currrentItem, initialIdx)
-        }.toMap()
+            @Test
+            fun `Should find the value  of the sum of all the priroties by item type reading the sample file`() {
+                val filePath = "src/test/resources/2022/day3"
+                val sample = BufferedReader(FileReader("$filePath/sample.txt")).lines().toList()
 
-        val contentOfFirstRucksack = "vJrwpWtwJgWrhcsFMMfFFhFp"
-        val commonItemInFirstRucksack = findCommonItems(contentOfFirstRucksack).first()
-        var prio = 0
-        if (commonItemInFirstRucksack.isLowerCase()) {
-            prio += lowercaseWithPriorities.get(commonItemInFirstRucksack)!!
-        }
+                val sumOfPriorities = rucsackReorganization.computeSumOfAllPriorities(sample)
 
-        assertThat(prio).isEqualTo(16)
-    }
-
-    @Test
-    fun `Should do something`() {
-        val sample = listOf(
-            "vJrwpWtwJgWrhcsFMMfFFhFp",
-            "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL",
-            "PmmdzqPrVvPwwTWBwg",
-            "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn",
-            "ttgJtRGJQctTZtZT",
-            "CrZsJsPPZsGzwwsLwLmpwMDw"
-        )
-        var priorities = 0
-        val itemsByPriorities = buildItemsTypeWithPriorities()
-
-        sample.forEach {
-            val commonItem = findCommonItems(it).first()
-            if (commonItem.isLowerCase()) {
-                priorities += itemsByPriorities.first.get(commonItem)!!
-            }else {
-                priorities += itemsByPriorities.second.get(commonItem)!!
+                assertThat(sumOfPriorities).isEqualTo(157)
             }
         }
-        assertThat(priorities).isEqualTo(157)
+
+        @Nested
+        inner class Part2 {
+            val sample = listOf(
+                "vJrwpWtwJgWrhcsFMMfFFhFp",
+                "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL",
+                "PmmdzqPrVvPwwTWBwg",
+                "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn",
+                "ttgJtRGJQctTZtZT",
+                "CrZsJsPPZsGzwwsLwLmpwMDw"
+            )
+
+            @Test
+            fun `Should form group of three given the sample`() {
+                val commonItems = rucsackReorganization.findCommonItemsInGroupOf3(sample)
+
+                assertThat(commonItems).hasSize(2)
+                assertThat(commonItems).containsExactly('r', 'Z');
+            }
+
+            @Test
+            fun `Should compute the sum of priorities given all the common item in all groups`(){
+                val commonItems: ImmutableList<Char> = rucsackReorganization.findCommonItemsInGroupOf3(sample)
+                val totalPriorities =  rucsackReorganization.computeSumOfPrioritiesForAllGroups(commonItems)
+
+                assertThat(totalPriorities).isEqualTo(70)
+            }
+
+        }
+
     }
 
-    private fun buildItemsTypeWithPriorities(): Pair<Map<Char, Int>, Map<Char, Int>> {
-        val lowercaseWithPriorities: Map<Char, Int> = alphabetsInLowerCase.mapIndexed { index, currentItem ->
-            Pair(currentItem, index + 1)
-        }.toMap()
+    @Nested
+    inner class Puzzle {
+        val filePath = "src/test/resources/2022/day3"
+        val puzzle = BufferedReader(FileReader("$filePath/puzzleInput.txt")).lines().toList()
 
-        var initialIdx = 26
-        val uppercaseWithPriorities: Map<Char, Int> = alphabetsInUpperCase.map { currrentItem ->
-            initialIdx++
-            Pair(currrentItem, initialIdx)
-        }.toMap()
-        return Pair(lowercaseWithPriorities, uppercaseWithPriorities)
+        @Test
+        fun `Should compute the sum of priorities given the puzzle `() {
+            val sumOfPriorities = rucsackReorganization.computeSumOfAllPriorities(puzzle)
+
+            assertThat(sumOfPriorities).isEqualTo(7908)
+        }
+
+        @Test
+        fun `Should compute the sum of priorities given all the common item in all groups`(){
+            val commonItems: ImmutableList<Char> = rucsackReorganization.findCommonItemsInGroupOf3(puzzle)
+            val totalPriorities =  rucsackReorganization.computeSumOfPrioritiesForAllGroups(commonItems)
+
+            assertThat(totalPriorities).isEqualTo(2838)
+        }
+
     }
 
-    private fun findCommonItems(content: String): Set<Char> {
-        val contentByCompartiment: List<String> = content.chunked(content.length / 2)
-        val contentOfFirstCompartiment = contentByCompartiment.first().toCharArray()
-        val contentOfSecondCompartiment = contentByCompartiment.last().toCharArray()
-        return contentOfFirstCompartiment.intersect(contentOfSecondCompartiment.toList())
-    }
+
 }
