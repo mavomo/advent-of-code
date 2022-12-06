@@ -78,10 +78,7 @@ internal class SupplyStacksTest {
                     "move 2 from 2 to 1\n" +
                     "move 1 from 1 to 2"
 
-            val instructions: List<Triple<Int, Int, Int>> = fullSample.split("\n").filter { it.startsWith("move") }
-                .flatMap { it.split("\n") }.map {
-                    extractInstructionsInTriplet(it)
-                }
+            val instructions: List<Triple<Int, Int, Int>> = fullSample.getInstructionsAsTriplet(fullSample)
             val columnIndices: List<Int> = supplies.retrieveStackNumbers()
             val crates = supplies.retrieveAllCratesPerStack()
 
@@ -93,12 +90,12 @@ internal class SupplyStacksTest {
             assertThat(finalStacks.last()).containsExactly("[P]", "[D]", "[N]", "[Z]")
         }
 
-        private fun extractInstructionsInTriplet(sample: String): Triple<Int, Int, Int> {
-            val instructions = sample.filter { it.digitToIntOrNull() != null }.toCharArray().map { it.digitToInt() }
-            return Triple(instructions.first(), instructions[1], instructions.last())
-        }
     }
 }
+
+
+
+
 
 
 

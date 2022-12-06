@@ -75,3 +75,13 @@ fun String.retrieveAllCratesPerStack(): List<String>  = this.split("\n").filter 
 
 
 fun String.retrieveAllTheInstruction(): List<String> = this.split("\n").filter { it.startsWith("move") }
+
+fun String.extractInstructionsInTriplet(it: String): Triple<Int, Int, Int> {
+    val instructions = this.filter { it.digitToIntOrNull() != null }.toCharArray().map { it.digitToInt() }
+    return Triple(instructions.first(), instructions[1], instructions.last())
+}
+
+fun String.getInstructionsAsTriplet(puzzle: String): List<Triple<Int, Int, Int>> = this.split("\n").filter { it.startsWith("move") }
+    .flatMap { it.split("\n") }.map {
+        it.extractInstructionsInTriplet(it)
+    }
