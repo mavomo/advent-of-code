@@ -25,25 +25,27 @@ class SupplyStacks {
 
     fun addCratesPerStack(lineInput: List<String>, columnIndices: List<Int>): ImmutableList<ArrayDeque<String>>? {
         val myColumns: MutableList<ArrayDeque<String>> = createDefaultStateOfStacks(columnIndices)
-
         for (line in lineInput) {
-            val myCrateAsLine: List<String> = line.split(" ")
-            val lower = myCrateAsLine.subList(0, (myCrateAsLine.size / 2) - 1)
-            val upper = myCrateAsLine.subList((myCrateAsLine.size / 2), myCrateAsLine.size)
-            val theCrate = myCrateAsLine.find { it.isACrate() }!!
-            var idxForInsertion = 0
-            if (upper.contains(theCrate)) {
-                idxForInsertion++
-                val rightColumn = myColumns[idxForInsertion]
-                rightColumn.addFirst(theCrate)
-            } else {
-                val crateIterator = myCrateAsLine.iterator()
-                var lastColumn = 0
-                while (crateIterator.hasNext()) {
-                    val currentCrate = crateIterator.next()
-                    if (currentCrate.isACrate()) {
-                        val rightColumn = myColumns[lastColumn]
-                        rightColumn.addFirst(currentCrate)
+            val lineIterator = line.iterator()
+            var lastColumn = 0
+            var lastWhitespace = 0
+            val currentCrate: StringBuilder = java.lang.StringBuilder()
+            while (lineIterator.hasNext()) {
+                val currentValue = lineIterator.next()
+                if (!currentValue.isWhitespace() && currentCrate.length <= 3) {
+                    currentCrate.append(currentValue)
+                    if (currentCrate.length == 3) {
+                        val column = myColumns[lastColumn]
+                        column.addFirst(currentCrate.toString())
+                        lastColumn++
+                        currentCrate.clear()
+                        lastWhitespace = 0
+                    }
+                }
+                if (currentValue.isWhitespace() && currentCrate.isEmpty()) {
+                    lastWhitespace++
+                    if(lastWhitespace >= 4 ){
+                        lastWhitespace = 0
                         lastColumn++
                     }
                 }
@@ -52,14 +54,14 @@ class SupplyStacks {
         return ImmutableList.copyOf(myColumns)
     }
 
-    private fun createDefaultStateOfStacks(columnIndices: List<Int>): MutableList<ArrayDeque<String>> {
-        val myColumns: MutableList<ArrayDeque<String>> = mutableListOf()
-        for (index in 1..columnIndices.size) {
-            val column = ArrayDeque<String>()
-            myColumns.add(column)
-        }
-        return myColumns
+private fun createDefaultStateOfStacks(columnIndices: List<Int>): MutableList<ArrayDeque<String>> {
+    val myColumns: MutableList<ArrayDeque<String>> = mutableListOf()
+    for (index in 1..columnIndices.size) {
+        val column = ArrayDeque<String>()
+        myColumns.add(column)
     }
+    return myColumns
+}
 
 }
 
@@ -81,7 +83,7 @@ fun String.retrieveAllCratesPerStack(): List<String> =
 fun String.retrieveAllTheInstruction(): List<String> = this.split("\n").filter { it.startsWith("move") }
 
 fun String.extractInstructionsInTriplet(): Triple<Int, Int, Int> {
-    val instructions = this.filter { it.digitToIntOrNull() != null }.toCharArray().map { it.digitToInt() }
+    val instructions = this.filter { !it.isLetter() }.split(" ").filter { it.isNotEmpty() }.map { it.toInt() }
     return Triple(instructions.first(), instructions[1], instructions.last())
 }
 
