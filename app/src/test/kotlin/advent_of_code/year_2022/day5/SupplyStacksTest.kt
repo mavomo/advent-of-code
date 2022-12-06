@@ -162,12 +162,9 @@ internal class SupplyStacksTest {
             val finalStacks =
                 supplyStacks.moveCratesAccordingToInstructions(instructions, myColumnsWithCrates!!.toMutableList())
 
-            /* assertThat(finalStacks.first()).containsExactly("[C]")
-             assertThat(finalStacks[1]).containsExactly("[M]")
-             assertThat(finalStacks.last()).containsExactly("[P]", "[D]", "[N]", "[Z]")*/
-
             val topOfStacks = finalStacks.map { it.last() }
-            assertThat(topOfStacks).containsExactly("[C]", "[M]", "[Z]")
+            assertThat(topOfStacks).containsExactly("[S]", "[B]", "[P]", "[Q]", "[R]", "[S]", "[C]", "[D]", "[F]")
+            //SBPQRSCDF
         }
     }
 
