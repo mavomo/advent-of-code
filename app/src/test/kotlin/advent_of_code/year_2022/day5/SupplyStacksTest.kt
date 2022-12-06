@@ -1,68 +1,109 @@
 package advent_of_code.year_2022.day5
 
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 internal class SupplyStacksTest {
     private val supplies = "    [D]    \n" +
-            "[N] [C]    \n" +
-            "[Z] [M] [P]\n" +
-            " 1   2   3 \n" +
-            "\n" +
-            "move 1 from 2 to 1\n"
+                            "[N] [C]    \n" +
+                            "[Z] [M] [P]\n" +
+                            " 1   2   3 \n" +
+                            "\n" +
+                            "move 1 from 2 to 1\n"
 
-    @Test
-    fun `Should recognize a crate`() {
-        val singleCrate = "    [D]    \n".removeSuffix("\n")
-        val singleCrate2 = "[N]"
+    private val supplyStacks = SupplyStacks()
 
-        Assertions.assertThat(singleCrate.isACrate()).isTrue
-        Assertions.assertThat(singleCrate2.isACrate()).isTrue
+    @Nested
+    inner class Part1 {
+        @Test
+        fun `Should recognize a crate`() {
+            val singleCrate = "    [D]    \n".removeSuffix("\n")
+            val singleCrate2 = "[N]"
 
-    }
+            assertThat(singleCrate.isACrate()).isTrue
+            assertThat(singleCrate2.isACrate()).isTrue
 
-    @Test
-    fun `Should retrieve all the columns, all crates and all the move instructions from the sample`() {
-        val columnLines = supplies.split("\n").filter { it.isNotEmpty() && !it.isACrate() && !it.startsWith("move") }
-        val crates = supplies.split("\n").filter { it.isACrate() && !it.startsWith("move") }
-        val instructions = supplies.split("\n").filter { it.startsWith("move") }
-
-        Assertions.assertThat(columnLines).containsOnly(" 1   2   3 ")
-        Assertions.assertThat(crates).containsOnly("    [D]    ", "[N] [C]    ", "[Z] [M] [P]")
-        Assertions.assertThat(instructions).containsOnly("move 1 from 2 to 1")
-    }
-
-    @Test
-    fun `Should arrange the column with the differents crates given as sample`() {
-        val columnAsString: String? = supplies.split("\n").find { it.isNotEmpty() && !it.isACrate() && !it.startsWith("move") }
-        val allColumns = columnAsString!!.split("   ")
-        val crates = supplies.split("\n").filter { it.isACrate() && !it.startsWith("move") }
-        val startingStacks  = buildStackWithTheirCrates(crates)
-
-
-        Assertions.assertThat(allColumns).hasSize(3)
-        Assertions.assertThat(startingStacks.first()).hasSize(1)
-        Assertions.assertThat(startingStacks.first()).containsExactly("[D]")
-        Assertions.assertThat(startingStacks[1]).containsExactly("[N] [C]")
-        Assertions.assertThat(startingStacks.last()).containsExactly("[Z] [M] [P]")
-
-    }
-
-    private fun buildStackWithTheirCrates(crates: List<String>) = crates.map { crate ->
-        val currentColumn = ArrayDeque<String>()
-        val crateIterator = crate.split(" ").iterator()
-        if (crateIterator.hasNext()) {
-            if (crate.isACrate()) {
-                currentColumn.add(crate.trim())
-            }
         }
-        currentColumn
+
+        @Test
+        fun `Should retrieve all the columns, all crates and all the move instructions from the sample`() {
+            val columnLines = supplies.split("\n").filter { it.isNotEmpty() && !it.isACrate() && !it.startsWith("move") }
+            val crates = supplies.split("\n").filter { it.isACrate() && !it.startsWith("move") }
+            val instructions = supplies.split("\n").filter { it.startsWith("move") }
+
+            assertThat(columnLines).containsOnly(" 1   2   3 ")
+            assertThat(crates).containsOnly("    [D]    ", "[N] [C]    ", "[Z] [M] [P]")
+            assertThat(instructions).containsOnly("move 1 from 2 to 1")
+        }
+
+        @Test
+        fun `Should arrange the column with the differents crates given as sample`() {
+            val crates = supplies.split("\n").filter { it.isACrate() && !it.startsWith("move") }
+
+            val startingStacks  = supplyStacks.buildStackWithTheirCrates(crates)
+
+
+            assertThat(startingStacks.first()).hasSize(1)
+            assertThat(startingStacks.first()).containsExactly("[D]")
+            assertThat(startingStacks[1]).containsExactly("[N]", "[C]")
+            assertThat(startingStacks.last()).containsExactly("[Z]", "[M]", "[P]")
+        }
+
+        @Test
+        fun `Should move crates given one instruction`(){
+            val sample = "move 1 from 2 to 1\n"
+            val instructionLine = extractInstructionsInTriplet(sample)
+
+            val (depart, destination) =supplyStacks.moveCratesAndReturn(supplies, instructionLine)
+
+            assertThat(depart).containsExactly("[N]")
+            assertThat(destination).containsExactly("[D]", "[C]")
+        }
+
+        @Test
+        fun `Should move crates given all the instructions instruction`(){
+            val fullSample = " [D]    \n" +
+                    "[N] [C]    \n" +
+                    "[Z] [M] [P]\n" +
+                    " 1   2   3 \n" +
+                    "\n" +
+                    "move 1 from 2 to 1\n" +
+                    "move 3 from 1 to 3\n" +
+                    "move 2 from 2 to 1\n" +
+                    "move 1 from 1 to 2"
+
+            val instructions: List<Triple<Int, Int, Int>> = fullSample.split("\n").filter { it.startsWith("move") }
+                .flatMap { it.split("\n") }.map {
+                 extractInstructionsInTriplet(it)
+            }
+
+
+         val finalStacks = supplyStacks.moveCratesAccordingToInstructions(fullSample, instructions)
+
+
+         //   val (depart, destination) =supplyStacks.moveCratesAndReturn(supplies, instructionLine)
+
+            assertThat(finalStacks.first()).containsExactly("[C]")
+            assertThat(finalStacks.get(1)).containsExactly("[M]")
+            assertThat(finalStacks.last()).containsExactly("[Z]")
+        }
+
+
+
+
+
+        private fun extractInstructionsInTriplet(sample: String): Triple<Int, Int, Int> {
+            val instructions = sample.filter { it.digitToIntOrNull() != null }.toCharArray().map { it.digitToInt() }
+            val instructionLine = Triple(instructions.first(), instructions[1], instructions.last())
+            return instructionLine
+        }
     }
 
 
+
+
+
 }
 
-private fun String.isACrate(): Boolean {
-    val pattern = "^(.*\\[([A-Z]*)\\].*)+\$"
-    return this.matches(Regex(pattern))
-}
+
