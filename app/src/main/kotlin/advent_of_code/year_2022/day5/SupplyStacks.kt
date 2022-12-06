@@ -28,7 +28,7 @@ class SupplyStacks {
 
         for (line in lineInput) {
             val myCrateAsLine: List<String> = line.split(" ")
-            val lower =  myCrateAsLine.subList(0, (myCrateAsLine.size /2)-1)
+            val lower = myCrateAsLine.subList(0, (myCrateAsLine.size / 2) - 1)
             val upper = myCrateAsLine.subList((myCrateAsLine.size / 2), myCrateAsLine.size)
             val theCrate = myCrateAsLine.find { it.isACrate() }!!
             var idxForInsertion = 0
@@ -37,11 +37,14 @@ class SupplyStacks {
                 val rightColumn = myColumns[idxForInsertion]
                 rightColumn.addFirst(theCrate)
             } else {
-                for (crateIdx in myCrateAsLine.indices) {
-                    val currentCrate = myCrateAsLine[crateIdx]
+                val crateIterator = myCrateAsLine.iterator()
+                var lastColumn = 0
+                while (crateIterator.hasNext()) {
+                    val currentCrate = crateIterator.next()
                     if (currentCrate.isACrate()) {
-                        val rightColumn = myColumns[crateIdx]
+                        val rightColumn = myColumns[lastColumn]
                         rightColumn.addFirst(currentCrate)
+                        lastColumn++
                     }
                 }
             }
@@ -66,22 +69,23 @@ fun String.isACrate(): Boolean {
 }
 
 fun String.retrieveStackNumbers(): List<Int> {
-   return this.split("\n")
-       .find { it.isNotEmpty() && !it.isACrate() && !it.startsWith("move") }
-       ?.filter { it.digitToIntOrNull() != null }?.map { it.digitToInt() }!!
+    return this.split("\n")
+        .find { it.isNotEmpty() && !it.isACrate() && !it.startsWith("move") }
+        ?.filter { it.digitToIntOrNull() != null }?.map { it.digitToInt() }!!
 }
 
-fun String.retrieveAllCratesPerStack(): List<String>  = this.split("\n").filter { it.isACrate() && !it.startsWith("move") }
+fun String.retrieveAllCratesPerStack(): List<String> =
+    this.split("\n").filter { it.isACrate() && !it.startsWith("move") }
 
 
 fun String.retrieveAllTheInstruction(): List<String> = this.split("\n").filter { it.startsWith("move") }
 
-fun String.extractInstructionsInTriplet(it: String): Triple<Int, Int, Int> {
+fun String.extractInstructionsInTriplet(): Triple<Int, Int, Int> {
     val instructions = this.filter { it.digitToIntOrNull() != null }.toCharArray().map { it.digitToInt() }
     return Triple(instructions.first(), instructions[1], instructions.last())
 }
 
-fun String.getInstructionsAsTriplet(puzzle: String): List<Triple<Int, Int, Int>> = this.split("\n").filter { it.startsWith("move") }
+fun String.getInstructionsAsTriplet(): List<Triple<Int, Int, Int>> = this.split("\n").filter { it.startsWith("move") }
     .flatMap { it.split("\n") }.map {
-        it.extractInstructionsInTriplet(it)
+        it.extractInstructionsInTriplet()
     }

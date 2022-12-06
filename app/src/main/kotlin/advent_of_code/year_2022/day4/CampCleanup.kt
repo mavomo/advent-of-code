@@ -41,7 +41,7 @@ class CampCleanup {
         return Pair(commonSectors, isFullyContained)
     }
 
-    fun getCommonAssignedSections2(assignment: String): Pair<Set<Int>, Boolean> {
+    private fun getCommonAssignedSections2(assignment: String): Pair<Set<Int>, Boolean> {
         val assignmentPerGroup = assignment.split(",")
         val firstPairSection = assignmentPerGroup.first().split("-").map { it.toInt() }
         val secondPairSection = assignmentPerGroup.last().split("-").map { it.toInt() }
@@ -50,11 +50,6 @@ class CampCleanup {
         val fullSectorForTheOtherGroup = (secondPairSection.first()..secondPairSection.last()).toSet()
 
         val commonSectors = fullSectorForTheOtherGroup.intersect(fullSectorForFirstGroup)
-
-        /* val isFullyContained =
-             fullSectorForFirstGroup.containsAll(fullSectorForTheOtherGroup) || fullSectorForTheOtherGroup.containsAll(
-                 fullSectorForFirstGroup
-             )*/
         return Pair(commonSectors, false)
     }
 
