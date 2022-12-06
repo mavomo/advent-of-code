@@ -5,12 +5,12 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 internal class SupplyStacksTest {
-    private val supplies = "    [D]    \n" +
-                            "[N] [C]    \n" +
-                            "[Z] [M] [P]\n" +
-                            " 1   2   3 \n" +
-                            "\n" +
-                            "move 1 from 2 to 1\n"
+    private val supplies = "     [D]    \n" +
+            "[N] [C]    \n" +
+            "[Z] [M] [P]\n" +
+            " 1   2   3 \n" +
+            "\n" +
+            "move 1 from 2 to 1\n"
 
     private val supplyStacks = SupplyStacks()
 
@@ -28,7 +28,8 @@ internal class SupplyStacksTest {
 
         @Test
         fun `Should retrieve all the columns, all crates and all the move instructions from the sample`() {
-            val columnLines = supplies.split("\n").filter { it.isNotEmpty() && !it.isACrate() && !it.startsWith("move") }
+            val columnLines =
+                supplies.split("\n").filter { it.isNotEmpty() && !it.isACrate() && !it.startsWith("move") }
             val crates = supplies.split("\n").filter { it.isACrate() && !it.startsWith("move") }
             val instructions = supplies.split("\n").filter { it.startsWith("move") }
 
@@ -39,30 +40,47 @@ internal class SupplyStacksTest {
 
         @Test
         fun `Should arrange the column with the differents crates given as sample`() {
+            val columnIndices: List<Int> = supplies.split("\n")
+                .find { it.isNotEmpty() && !it.isACrate() && !it.startsWith("move") }
+                ?.filter { it.digitToIntOrNull() != null }?.map { it.digitToInt() }!!
+
+            val myColumns: MutableList<ArrayDeque<String>> = mutableListOf<ArrayDeque<String>>()
+            for (index in 1..columnIndices.size) {
+                val column = ArrayDeque<String>()
+                myColumns.add(column)
+            }
+
             val crates = supplies.split("\n").filter { it.isACrate() && !it.startsWith("move") }
 
-            val startingStacks  = supplyStacks.buildStackWithTheirCrates(crates)
+            for (crate in crates) {
+                val lines = crate.split(" ")
 
+                for (lineIndex in 1..lines.size) {
+                    val index = lineIndex - 1
+                    val currentCrate = lines.get(index)
+                    val associatedColumn = myColumns.get(index)
+                    associatedColumn.addFirst(currentCrate)
+                }
+            }
 
-            assertThat(startingStacks.first()).hasSize(1)
-            assertThat(startingStacks.first()).containsExactly("[D]")
-            assertThat(startingStacks[1]).containsExactly("[N]", "[C]")
-            assertThat(startingStacks.last()).containsExactly("[Z]", "[M]", "[P]")
+            assertThat(myColumns.first()).containsExactly("[Z]", "[N]")
+            assertThat(myColumns[1]).containsExactly("[M]", "[C]", "[D]")
+            assertThat(myColumns.last()).containsExactly("[P]")
         }
 
         @Test
-        fun `Should move crates given one instruction`(){
+        fun `Should move crates given one instruction`() {
             val sample = "move 1 from 2 to 1\n"
             val instructionLine = extractInstructionsInTriplet(sample)
 
-            val (depart, destination) =supplyStacks.moveCratesAndReturn(supplies, instructionLine)
+            val (depart, destination) = supplyStacks.moveCratesAndReturn(supplies, instructionLine)
 
             assertThat(depart).containsExactly("[N]")
             assertThat(destination).containsExactly("[D]", "[C]")
         }
 
         @Test
-        fun `Should move crates given all the instructions instruction`(){
+        fun `Should move crates given all the instructions instruction`() {
             val fullSample = " [D]    \n" +
                     "[N] [C]    \n" +
                     "[Z] [M] [P]\n" +
@@ -75,22 +93,15 @@ internal class SupplyStacksTest {
 
             val instructions: List<Triple<Int, Int, Int>> = fullSample.split("\n").filter { it.startsWith("move") }
                 .flatMap { it.split("\n") }.map {
-                 extractInstructionsInTriplet(it)
-            }
+                    extractInstructionsInTriplet(it)
+                }
 
-
-         val finalStacks = supplyStacks.moveCratesAccordingToInstructions(fullSample, instructions)
-
-
-         //   val (depart, destination) =supplyStacks.moveCratesAndReturn(supplies, instructionLine)
+            val finalStacks = supplyStacks.moveCratesAccordingToInstructions(fullSample, instructions)
 
             assertThat(finalStacks.first()).containsExactly("[C]")
             assertThat(finalStacks.get(1)).containsExactly("[M]")
             assertThat(finalStacks.last()).containsExactly("[Z]")
         }
-
-
-
 
 
         private fun extractInstructionsInTriplet(sample: String): Triple<Int, Int, Int> {
@@ -99,11 +110,6 @@ internal class SupplyStacksTest {
             return instructionLine
         }
     }
-
-
-
-
-
 }
 
 
