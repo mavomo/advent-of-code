@@ -1,6 +1,5 @@
 package advent_of_code.year_2022.day5
 
-import com.google.common.collect.ImmutableList
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -29,13 +28,12 @@ internal class SupplyStacksTest {
 
         @Test
         fun `Should retrieve all the columns, all crates and all the move instructions from the sample`() {
-            val columnLines =
-                supplies.split("\n").filter { it.isNotEmpty() && !it.isACrate() && !it.startsWith("move") }
-            val crates = supplies.split("\n").filter { it.isACrate() && !it.startsWith("move") }
-            val instructions = supplies.split("\n").filter { it.startsWith("move") }
+            val columnLines = supplies.retrieveStackNumbers()
+            val crates = supplies.retrieveAllCratesPerStack()
+            val instructions = supplies.retrieveAllTheInstruction()
 
-            assertThat(columnLines).containsOnly(" 1   2   3 ")
-            assertThat(crates).containsOnly("    [D]    ", "[N] [C]    ", "[Z] [M] [P]")
+            assertThat(columnLines).containsOnly(1,2,3)
+            assertThat(crates).containsOnly("     [D]    ", "[N] [C]    ", "[Z] [M] [P]")
             assertThat(instructions).containsOnly("move 1 from 2 to 1")
         }
 
@@ -43,61 +41,29 @@ internal class SupplyStacksTest {
         fun `Should arrange each crate in their stack given the sample`() {
             val input = "     [D]    \n" +
                         "[N] [C]    \n" +
-                        "[Z] [M] [P]\n"
-            val lineInput = input.split("\n").filter { it.isNotEmpty() }
-            val myColumns: MutableList<ArrayDeque<String>> = mutableListOf<ArrayDeque<String>>()
-            for (index in 1..3) {
-                val column = ArrayDeque<String>()
-                myColumns.add(column)
-            }
+                        "[Z] [M] [P]\n"+
+                        " 1   2   3 \n"
+            val columnLines: List<Int> = input.retrieveStackNumbers()
 
-            val myColumnsWithCrates = supplyStacks.addCratesPerStack(lineInput, myColumns)
+            val lineInput = input.retrieveAllCratesPerStack()
+            val myColumnsWithCrates = supplyStacks.addCratesPerStack(lineInput, columnLines)
 
             assertThat(myColumnsWithCrates!!.first()).containsExactly("[Z]", "[N]")
             assertThat(myColumnsWithCrates[1]).containsExactly("[M]","[C]","[D]", )
             assertThat(myColumnsWithCrates.last()).containsExactly("[P]")
-
         }
 
 
         @Test
-        fun `Should arrange the column with the differents crates given as sample`() {
-            val columnIndices: List<Int> = supplies.split("\n")
-                .find { it.isNotEmpty() && !it.isACrate() && !it.startsWith("move") }
-                ?.filter { it.digitToIntOrNull() != null }?.map { it.digitToInt() }!!
+        fun `Should arrange the column with the different crates given as sample`() {
+            val columnIndices: List<Int> = supplies.retrieveStackNumbers()
+            val crates = supplies.retrieveAllCratesPerStack()
 
-            val myColumns: MutableList<ArrayDeque<String>> = mutableListOf<ArrayDeque<String>>()
-            for (index in 1..columnIndices.size) {
-                val column = ArrayDeque<String>()
-                myColumns.add(column)
-            }
+            val myColumnsWithCrates = supplyStacks.addCratesPerStack(crates, columnIndices)
 
-            val crates = supplies.split("\n").filter { it.isACrate() && !it.startsWith("move") }
-
-            for (crate in crates) {
-                val lines = crate.split(" ")
-                for (lineIndex in 1..lines.size) {
-                    val index = lineIndex - 1
-                    val currentCrate = lines[index]
-                    val associatedColumn = myColumns.get(index)
-                    associatedColumn.addFirst(currentCrate)
-                }
-            }
-
-            assertThat(myColumns.first()).containsExactly("[Z]", "[N]")
-            assertThat(myColumns[1]).containsExactly("[M]", "[C]", "[D]")
-            assertThat(myColumns.last()).containsExactly("[P]")
-        }
-
-        @Test
-        fun `Should move crates given one instruction`() {
-            val sample = "move 1 from 2 to 1\n"
-            val instructionLine = extractInstructionsInTriplet(sample)
-
-            val (depart, destination) = supplyStacks.moveCratesAndReturn(supplies, instructionLine)
-
-            assertThat(depart).containsExactly("[N]")
-            assertThat(destination).containsExactly("[D]", "[C]")
+            assertThat(myColumnsWithCrates!!.first()).containsExactly("[Z]", "[N]")
+            assertThat(myColumnsWithCrates[1]).containsExactly("[M]", "[C]", "[D]")
+            assertThat(myColumnsWithCrates.last()).containsExactly("[P]")
         }
 
         @Test
@@ -116,21 +82,24 @@ internal class SupplyStacksTest {
                 .flatMap { it.split("\n") }.map {
                     extractInstructionsInTriplet(it)
                 }
+            val columnIndices: List<Int> = supplies.retrieveStackNumbers()
+            val crates = supplies.retrieveAllCratesPerStack()
 
-            val finalStacks = supplyStacks.moveCratesAccordingToInstructions(fullSample, instructions)
+            val myColumnsWithCrates = supplyStacks.addCratesPerStack(crates, columnIndices)
+            val finalStacks = supplyStacks.moveCratesAccordingToInstructions(instructions, myColumnsWithCrates!!.toMutableList())
 
             assertThat(finalStacks.first()).containsExactly("[C]")
             assertThat(finalStacks[1]).containsExactly("[M]")
-            assertThat(finalStacks.last()).containsExactly("[Z]")
+            assertThat(finalStacks.last()).containsExactly("[P]", "[D]", "[N]", "[Z]")
         }
-
 
         private fun extractInstructionsInTriplet(sample: String): Triple<Int, Int, Int> {
             val instructions = sample.filter { it.digitToIntOrNull() != null }.toCharArray().map { it.digitToInt() }
-            val instructionLine = Triple(instructions.first(), instructions[1], instructions.last())
-            return instructionLine
+            return Triple(instructions.first(), instructions[1], instructions.last())
         }
     }
 }
+
+
 
 
