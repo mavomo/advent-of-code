@@ -144,6 +144,24 @@ internal class SupplyStacksTest {
             assertThat(myColumnsWithCrates[7]).containsExactly("[C]", "[L]", "[R]")
             assertThat(myColumnsWithCrates[8]).containsExactly("[D]", "[P]", "[B]", "[F]")
         }
+        @Test
+        fun `Should keep the crates order when using the moving crate 9001`(){
+            val filePath = "src/test/resources/2022/day5"
+            val sample = BufferedReader(FileReader("$filePath/sample-3.txt")).lines().toList().joinToString("\n")
+            val instructions: List<Triple<Int, Int, Int>> = sample.getInstructionsAsTriplet()
+
+            val columnIndices: List<Int> = sample.retrieveStackNumbers()
+            val crates = sample.retrieveAllCratesPerStack()
+
+            val myColumnsWithCrates = supplyStacks.addCratesPerStack(crates, columnIndices)
+            val finalStacksWithCrateMover9001 =
+                supplyStacks.moveCratesWithCrateMover9001(instructions, myColumnsWithCrates!!.toMutableList())
+
+            assertThat(finalStacksWithCrateMover9001!!.last()).containsExactly("[P]", "[Z]", "[N]", "[D]")
+            val topOfStacks = finalStacksWithCrateMover9001.map { it.last() }
+            assertThat(topOfStacks).containsExactly("[M]", "[C]", "[D]")
+        }
+
     }
 
     @Nested
@@ -164,8 +182,28 @@ internal class SupplyStacksTest {
 
             val topOfStacks = finalStacks.map { it.last() }
             assertThat(topOfStacks).containsExactly("[S]", "[B]", "[P]", "[Q]", "[R]", "[S]", "[C]", "[D]", "[F]")
-            //SBPQRSCDF
         }
+
+        @Test
+        fun `Should get the crates on top of the stack using the CrateMover 9001`(){
+            val filePath = "src/test/resources/2022/day5"
+            val sample = BufferedReader(FileReader("$filePath/puzzleInput.txt")).lines().toList().joinToString("\n")
+            val instructions: List<Triple<Int, Int, Int>> = sample.getInstructionsAsTriplet()
+
+            val columnIndices: List<Int> = sample.retrieveStackNumbers()
+            val crates = sample.retrieveAllCratesPerStack()
+
+            val myColumnsWithCrates = supplyStacks.addCratesPerStack(crates, columnIndices)
+            val finalStacksWithCrateMover9001 =
+                supplyStacks.moveCratesWithCrateMover9001(instructions, myColumnsWithCrates!!.toMutableList())
+
+            assertThat(finalStacksWithCrateMover9001!!.last()).isEmpty()
+            val topOfStacks = finalStacksWithCrateMover9001.filter { it.isNotEmpty() }.map { it.last() }
+            // HTLZQ
+            assertThat(topOfStacks).containsExactly("[H]", "[T]", "[L]", "[Z]", "[Q]")
+
+        }
+
     }
 
 }

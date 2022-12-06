@@ -17,10 +17,36 @@ class SupplyStacks {
                     val removedElement = depart.removeLast()
                     destination.addLast(removedElement)
                 }
-
             }
         }
         return stacks
+    }
+
+    fun moveCratesWithCrateMover9001(
+        instructions: List<Triple<Int, Int, Int>>,
+        stacks: MutableList<ArrayDeque<String>>
+    ): ImmutableList<ArrayDeque<String>>? {
+        for (instruction in instructions) {
+            val depart = stacks[instruction.second - 1]
+            val nbCrateToRemove = instruction.first;
+            val destination = stacks[instruction.third - 1]
+            if(nbCrateToRemove==1){
+                for (c in 1..nbCrateToRemove) {
+                    if (depart.isNotEmpty()) {
+                        val removedElement = depart.removeLast()
+                        destination.addLast(removedElement)
+                    }
+                }
+            }else {
+                if(depart.isNotEmpty()){
+                    val orderedCrates = depart.take(nbCrateToRemove)
+                    destination.addAll(orderedCrates)
+                    depart.removeAll(orderedCrates)
+                }
+            }
+
+        }
+        return ImmutableList.copyOf(stacks)
     }
 
     fun addCratesPerStack(lineInput: List<String>, columnIndices: List<Int>): ImmutableList<ArrayDeque<String>>? {
