@@ -1,5 +1,7 @@
 package advent_of_code.year_2022.day5
 
+import com.google.common.collect.ImmutableList
+
 class SupplyStacks {
 
     fun moveCratesAndReturn(
@@ -50,6 +52,30 @@ class SupplyStacks {
             }
         }
         return stacks
+    }
+
+    fun addCratesPerStack(lineInput: List<String>, myColumns: MutableList<ArrayDeque<String>>): ImmutableList<ArrayDeque<String>>? {
+        for (line in lineInput) {
+            val myCrateAsLine: List<String> = line.split(" ")
+            val upper = myCrateAsLine.subList((myCrateAsLine.size / 2), myCrateAsLine.size)
+            val theCrate = myCrateAsLine.find { it.isACrate() }!!
+            var idxForInsertion = 0
+            if (upper.contains(theCrate)) {
+                idxForInsertion++
+                val rightColumn = myColumns[idxForInsertion]
+                rightColumn.addFirst(theCrate)
+            } else {
+                for (crateIdx in myCrateAsLine.indices) {
+                    val currentCrate = myCrateAsLine[crateIdx]
+                    if (currentCrate.isACrate()) {
+                        val rightColumn = myColumns[crateIdx]
+                        rightColumn.addFirst(currentCrate)
+                    }
+
+                }
+            }
+        }
+        return ImmutableList.copyOf(myColumns)
     }
 
 }

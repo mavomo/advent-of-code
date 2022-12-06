@@ -1,5 +1,6 @@
 package advent_of_code.year_2022.day5
 
+import com.google.common.collect.ImmutableList
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -39,6 +40,27 @@ internal class SupplyStacksTest {
         }
 
         @Test
+        fun `Should arrange each crate in their stack given the sample`() {
+            val input = "     [D]    \n" +
+                        "[N] [C]    \n" +
+                        "[Z] [M] [P]\n"
+            val lineInput = input.split("\n").filter { it.isNotEmpty() }
+            val myColumns: MutableList<ArrayDeque<String>> = mutableListOf<ArrayDeque<String>>()
+            for (index in 1..3) {
+                val column = ArrayDeque<String>()
+                myColumns.add(column)
+            }
+
+            val myColumnsWithCrates = supplyStacks.addCratesPerStack(lineInput, myColumns)
+
+            assertThat(myColumnsWithCrates!!.first()).containsExactly("[Z]", "[N]")
+            assertThat(myColumnsWithCrates[1]).containsExactly("[M]","[C]","[D]", )
+            assertThat(myColumnsWithCrates.last()).containsExactly("[P]")
+
+        }
+
+
+        @Test
         fun `Should arrange the column with the differents crates given as sample`() {
             val columnIndices: List<Int> = supplies.split("\n")
                 .find { it.isNotEmpty() && !it.isACrate() && !it.startsWith("move") }
@@ -54,10 +76,9 @@ internal class SupplyStacksTest {
 
             for (crate in crates) {
                 val lines = crate.split(" ")
-
                 for (lineIndex in 1..lines.size) {
                     val index = lineIndex - 1
-                    val currentCrate = lines.get(index)
+                    val currentCrate = lines[index]
                     val associatedColumn = myColumns.get(index)
                     associatedColumn.addFirst(currentCrate)
                 }
@@ -99,7 +120,7 @@ internal class SupplyStacksTest {
             val finalStacks = supplyStacks.moveCratesAccordingToInstructions(fullSample, instructions)
 
             assertThat(finalStacks.first()).containsExactly("[C]")
-            assertThat(finalStacks.get(1)).containsExactly("[M]")
+            assertThat(finalStacks[1]).containsExactly("[M]")
             assertThat(finalStacks.last()).containsExactly("[Z]")
         }
 
