@@ -144,23 +144,30 @@ internal class SupplyStacksTest {
             assertThat(myColumnsWithCrates[7]).containsExactly("[C]", "[L]", "[R]")
             assertThat(myColumnsWithCrates[8]).containsExactly("[D]", "[P]", "[B]", "[F]")
         }
+
+
         @Test
         fun `Should keep the crates order when using the moving crate 9001`(){
             val filePath = "src/test/resources/2022/day5"
             val sample = BufferedReader(FileReader("$filePath/sample-3.txt")).lines().toList().joinToString("\n")
+
+
             val instructions: List<Triple<Int, Int, Int>> = sample.getInstructionsAsTriplet()
+
 
             val columnIndices: List<Int> = sample.retrieveStackNumbers()
             val crates = sample.retrieveAllCratesPerStack()
 
             val myColumnsWithCrates = supplyStacks.addCratesPerStack(crates, columnIndices)
-            val finalStacksWithCrateMover9001 =
-                supplyStacks.moveCratesWithCrateMover9001(instructions, myColumnsWithCrates!!.toMutableList())
+            val finalStacksWithCrateMover9001 = supplyStacks.moveCratesWithCrateMover9001(instructions, myColumnsWithCrates!!.toMutableList())
 
-            assertThat(finalStacksWithCrateMover9001!!.last()).containsExactly("[P]", "[Z]", "[N]", "[D]")
-            val topOfStacks = finalStacksWithCrateMover9001.map { it.last() }
-            assertThat(topOfStacks).containsExactly("[M]", "[C]", "[D]")
+            assertThat(finalStacksWithCrateMover9001!!.first()).containsExactly("[M]")
+            assertThat(finalStacksWithCrateMover9001[1]).containsExactly("[C]")
+            assertThat(finalStacksWithCrateMover9001[2]).containsExactly("[P]","[Z]", "[N]", "[D]")
         }
+
+
+
 
     }
 
@@ -185,9 +192,28 @@ internal class SupplyStacksTest {
         }
 
         @Test
-        fun `Should get the crates on top of the stack using the CrateMover 9001`(){
+        fun `Should get the crates on top of the stack using the CrateMover *9001*`(){
             val filePath = "src/test/resources/2022/day5"
             val sample = BufferedReader(FileReader("$filePath/puzzleInput.txt")).lines().toList().joinToString("\n")
+            val instructions: List<Triple<Int, Int, Int>> = sample.getInstructionsAsTriplet()
+
+            val columnIndices: List<Int> = sample.retrieveStackNumbers()
+            val crates = sample.retrieveAllCratesPerStack()
+
+            val myColumnsWithCrates = supplyStacks.addCratesPerStack(crates, columnIndices)
+            val finalStacksWithCrateMover9001 = supplyStacks.moveCratesWithCrateMover9001(instructions, myColumnsWithCrates!!.toMutableList())
+
+
+            val topOfStacks = finalStacksWithCrateMover9001!!.map { it.last() }
+
+            //RGLVRCQSB
+            assertThat(topOfStacks).containsExactly("[R]", "[G]", "[L]", "[V]", "[R]", "[C]", "[Q]", "[S]", "[B]")
+        }
+
+        @Test
+        fun `Should keep the crates order when using the moving crate 9001 -- Nicolas`(){
+            val filePath = "src/test/resources/2022/day5"
+            val sample = BufferedReader(FileReader("$filePath/puzzleNico.txt")).lines().toList().joinToString("\n")
             val instructions: List<Triple<Int, Int, Int>> = sample.getInstructionsAsTriplet()
 
             val columnIndices: List<Int> = sample.retrieveStackNumbers()
@@ -197,11 +223,29 @@ internal class SupplyStacksTest {
             val finalStacksWithCrateMover9001 =
                 supplyStacks.moveCratesWithCrateMover9001(instructions, myColumnsWithCrates!!.toMutableList())
 
-            assertThat(finalStacksWithCrateMover9001!!.last()).isEmpty()
-            val topOfStacks = finalStacksWithCrateMover9001.filter { it.isNotEmpty() }.map { it.last() }
-            // HTLZQ
-            assertThat(topOfStacks).containsExactly("[H]", "[T]", "[L]", "[Z]", "[Q]")
+           // assertThat(finalStacksWithCrateMover9001!!.last()).containsExactly("[P]", "[Z]", "[N]", "[D]")
 
+            val topOfStacks = finalStacksWithCrateMover9001!!.map { it.last() }
+
+
+            //PQTJRSHWS
+            assertThat(topOfStacks).containsExactly("[P]", "[Q]", "[T]", "[J]","[R]", "[S]", "[H]", "[W]", "[S]" )
+        }
+
+        @Test
+        fun `Should arrange crates given Nico sample`() {
+            val filePath = "src/test/resources/2022/day5"
+            val sample = BufferedReader(FileReader("$filePath/puzzleNico.txt")).lines().toList().joinToString("\n")
+            val instructions: List<Triple<Int, Int, Int>> = sample.getInstructionsAsTriplet()
+
+            val columnIndices: List<Int> = sample.retrieveStackNumbers()
+            val crates = sample.retrieveAllCratesPerStack()
+
+            val myColumnsWithCrates = supplyStacks.addCratesPerStack(crates, columnIndices)
+            val finalStacks = supplyStacks.moveCratesAccordingToInstructions(instructions, myColumnsWithCrates!!.toMutableList())
+            val topOfStacks = finalStacks.map { it.last() }
+
+            assertThat(topOfStacks).containsExactly("[H]", "[B]", "[T]", "[M]", "[T]", "[B]", "[S]", "[D]", "[C]")
         }
 
     }

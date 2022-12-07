@@ -38,11 +38,14 @@ class SupplyStacks {
                     }
                 }
             }else {
-                if(depart.isNotEmpty()){
-                    val orderedCrates = depart.take(nbCrateToRemove)
-                    destination.addAll(orderedCrates)
-                    depart.removeAll(orderedCrates)
+                val removedCrates = ArrayDeque<String>()
+                for (c in 1..nbCrateToRemove) {
+                    if (depart.isNotEmpty()) {
+                        val removedElement = depart.removeLast()
+                        removedCrates.addFirst(removedElement)
+                    }
                 }
+                destination.addAll(removedCrates)
             }
 
         }
