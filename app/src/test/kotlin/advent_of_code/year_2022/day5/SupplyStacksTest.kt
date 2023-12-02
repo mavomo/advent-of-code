@@ -1,6 +1,5 @@
 package advent_of_code.year_2022.day5
 
-import org.assertj.core.api.Assertions.`in`
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
