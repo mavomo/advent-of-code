@@ -26,50 +26,6 @@ class TrebuchetTest {
             Assertions.assertThat(combination.sum()).isEqualTo(142)
         }
 
-        @Test
-        fun `_Part2_ Should return the first and last digit in full letter given a sequence`() {
-            val calibationsValues = """
-            two1nine
-            eightwothree
-            abcone2threexyz
-            xtwone3four
-            4nineeightseven2
-            zoneight234
-            7pqrstsixteen
-        """.trimIndent()
-
-            val allCalibrationValues = Trebuchet.getFirstAndLastAppearingDigitsInLetters(calibationsValues)
-
-            Assertions.assertThat(allCalibrationValues)
-                .containsExactly(
-                    "two,nine",
-                    "eight,three",
-                    "one,three",
-                    "two,four",
-                    "nine,seven",
-                    "one,eight",
-                    "six,six"
-                )
-        }
-
-        @Test
-        fun `Part_2 Should return the first and last calibration given a sequence with digits in spelled out with letters`() {
-            val calibationsValuesInLetters = """
-            two,nine
-            eight,three
-            one,three
-            two,four
-            nine,seven
-            one,eight
-            six,six
-        """.trimIndent()
-            val calibrationsInFullDigits = Trebuchet.getValidCalibrationsFromLettersToDigits(calibationsValuesInLetters)
-
-            Assertions.assertThat(calibrationsInFullDigits)
-                .containsExactly(
-                    "2,9", "8,3", "1,3", "2,4", "9,7", "1,8", "6,6"
-                )
-        }
 
         @Test
         fun `Should treat a whole line with the digits and the spelled in letters ones`() {
@@ -81,6 +37,7 @@ class TrebuchetTest {
                 4nineeightseven2
                 zoneight234
                 7pqrstsixteen
+                sixfconesix
             """.trimIndent()
 
             val combinationForTheLine: List<Int> = Trebuchet.readValidCalibrationsPerLines(Stream.of(sampleInput))
@@ -92,69 +49,54 @@ class TrebuchetTest {
                 24,
                 42,
                 14,
-                76
+                76,
+                66
             )
 
             Assertions.assertThat(combinationForTheLine.sum())
-                .isEqualTo(281)
+                .isEqualTo(347)
         }
+
 
         @Test
-        fun `Should do something`(){
-            val sample= """
-               eightthree6qskmkzs
-               cmkvmr3srbsnq7onefourbfsrbjvr
-               t3mtgjq4stm84
-               fiveseven2grlmfhmfg8bsb
-               9bgbplvtzstdsevenonedrbxhftrxgmqftjmdrr
-               sixfivezptk6
-               8mftfiveninedgfmtwo9three9
-               pscstrfnrpllhone5fivefourtwo
-               five33
-               4threegfs
-               6sixthreebvq5
-               tsjvdsljzfgfive6threemqjfhrsqkgfznbt
-               six8five
-               twoznvvqgmd5jsxltq
-               zvh9one
-               4threesevenfivesix2hmm
-               l8ccxxhqqjb1qltqxht9qknltdbmdbmone
-               psevenfournine7bzphqxtfmfhsbtxxldhcqj
-               9bzxmpnlqmt8
-               two73nineeighteight
-               5sixseven
+        fun `Should do something`() {
+            val sampleInput = """
+                1k
+                8sixqmone9zthx6
+                ldsmxpbkkx1rppscjfour3six
+                fivethreethreekxzgqmrz8
+                lxklrjjmqsix5snb7
+                threethreetwothree6
+                8three6
+                fnine7jmmseven3
+                rfhlkhhlx8sjqgclvlsctwo
+                vrzpdfjs5fxldpnhvhmmxhleight
+                9tmqznszjgrnlhnpxbc
+                3sxfscfseventhree
+                565vs2
+                four86six6
+                16
             """.trimIndent()
 
-
-            val combinationForTheLine: List<Int> = Trebuchet.readValidCalibrationsPerLines(Stream.of(sample))
-
+            val combinationForTheLine: List<Int> = Trebuchet.readValidCalibrationsPerLines(Stream.of(sampleInput))
             Assertions.assertThat(combinationForTheLine).containsExactly(
+                11,
                 86,
-                34,
-                34,
+                16,
                 58,
-                91,
-                66,
-                89,
-                12,
-                53,
-                43,
-                65,// new start
-                53,
-                65,
-                25,
-                91,
-                42,
-                81,
-                77,
-                98,
-                28,
-                57
+                67,
+                36,
+                86,
+                93,
+                82,
+                58,
+                99,
+                33,
+                52,
+                46,
+                16
             )
-
         }
-
-
     }
 
     @Nested
@@ -176,11 +118,12 @@ class TrebuchetTest {
 
             val combinationForTheLine: List<Int> = Trebuchet.readValidCalibrationsPerLines(calibrationValues)
 
-
-            Assertions.assertThat(combinationForTheLine.sum()).isEqualTo(55297)
+            Assertions.assertThat(combinationForTheLine.sum()).isEqualTo(55260)
 
         }
     }
 
 
 }
+
+

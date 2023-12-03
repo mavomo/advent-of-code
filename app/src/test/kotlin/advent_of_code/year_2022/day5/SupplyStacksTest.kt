@@ -106,7 +106,7 @@ internal class SupplyStacksTest {
         @Test
         fun `Should move crates given the instructions from the sample file`() {
             val filePath = "src/test/resources/2022/day5"
-            val sample = BufferedReader(FileReader("$filePath/sample.txt")).lines().toList().joinToString("\n")
+            val sample = BufferedReader(FileReader("$filePath/puzzleIn_Nico.txt")).lines().toList().joinToString("\n")
             val instructions: List<Triple<Int, Int, Int>> = sample.getInstructionsAsTriplet()
 
             val columnIndices: List<Int> = supplies.retrieveStackNumbers()

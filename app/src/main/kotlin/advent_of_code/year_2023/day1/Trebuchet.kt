@@ -5,7 +5,7 @@ import java.util.stream.Stream
 class Trebuchet {
     companion object {
 
-        val digitsInLetters = mapOf(
+        private val digitsInLetters = mapOf(
             "one" to 1,
             "two" to 2,
             "three" to 3,
@@ -19,6 +19,50 @@ class Trebuchet {
 
         fun getFirstAndLastCalibrations(calibrationValues: Stream<String>): MutableList<Int> {
             return this.getFirstAndLastCalibrations(calibrationValues.toList().joinToString("\n"))
+        }
+
+        fun readValidCalibrationsPerLines(
+            puzzleInput: Stream<String>,
+        ): List<Int> {
+            val combinationForTheLine: MutableList<Int> = mutableListOf()
+            puzzleInput.toList().joinToString("\n").lines().forEach { line ->
+                val digitsOnly: MutableList<Pair<Int, Int>> = getAllDigitsWithTheirPosition(line)
+                val mixedDigitsAndTheirPositions = getAllDigitsInLettersWithTheirIndexes(line)
+                digitsOnly.addAll(mixedDigitsAndTheirPositions)
+
+                val orderedDigitsWithLetters: List<Pair<Int, Int>> = digitsOnly.sortedBy { it.first }
+                val firstDigit = orderedDigitsWithLetters.first().second
+                val lastDigit = orderedDigitsWithLetters.last().second
+                combinationForTheLine.add("$firstDigit$lastDigit".toInt())
+            }
+            return combinationForTheLine.toList()
+        }
+
+        private fun getAllDigitsInLettersWithTheirIndexes(
+            line: String,
+        ): MutableList<Pair<Int, Int>> {
+            val mixedDigitsAndTheirPositions: MutableList<Pair<Int, Int>> = mutableListOf()
+            digitsInLetters.keys.forEach { digitAsLetter ->
+                val occurences: List<Int> = line.indexesOf(digitAsLetter)
+                if (occurences.isNotEmpty()) {
+                    occurences.forEach {
+                        val valueAsDigit: Int = digitsInLetters[digitAsLetter]!!
+                        mixedDigitsAndTheirPositions.add(Pair(it, valueAsDigit))
+                    }
+                }
+            }
+            return mixedDigitsAndTheirPositions
+        }
+
+        private fun getAllDigitsWithTheirPosition(line: String): MutableList<Pair<Int, Int>> {
+            val allDigits: MutableList<Pair<Int, Int>> = mutableListOf()
+            line.toCharArray().forEachIndexed { index, input ->
+                if (input.isDigit()) {
+                    val aDigit = Pair(index, input.digitToInt())
+                    allDigits.add(aDigit)
+                }
+            }
+            return allDigits
         }
 
         private fun getFirstAndLastCalibrations(calibrationValues: String): MutableList<Int> {
@@ -36,79 +80,13 @@ class Trebuchet {
             }
             return combination
         }
+    }
 
-         fun getFirstAndLastAppearingDigitsInLetters(
-            calibationsValues: String,
-        ): MutableList<String> {
+}
 
-            val allCalibrationValues: MutableList<String> = mutableListOf()
-            calibationsValues.lines().forEach { line ->
-                val digitsPerLine: MutableList<Pair<Int, String>> = mutableListOf()
-                digitsInLetters.keys.forEach { digitAsLetter ->
-                    val itsAMatch = line.contains(digitAsLetter)
-                    if (itsAMatch) {
-                        val cursor = line.indexOf(digitAsLetter)
-                        val value = line.substring(cursor, cursor + digitAsLetter.length)
-                        digitsPerLine.add(Pair(cursor, value))
-
-                    }
-                }
-                digitsPerLine.sortBy { it.first }
-                val firstCalibrationValue = digitsPerLine.first().second
-                val lastCalibrationValue = digitsPerLine.last().second
-                allCalibrationValues.add("$firstCalibrationValue,$lastCalibrationValue")
-            }
-            return allCalibrationValues
-        }
-
-         fun getValidCalibrationsFromLettersToDigits(calibationsValuesInLetters: String): MutableList<CharSequence> {
-            val calibrationsInFullDigits = mutableListOf<CharSequence>()
-
-            calibationsValuesInLetters.lines().forEach { line ->
-                val values = line.split(",")
-                val firstValue = digitsInLetters[values[0]]
-                val lastValue = digitsInLetters[values[1]]
-
-                val valuesInDigits = "$firstValue,$lastValue"
-                calibrationsInFullDigits.add(valuesInDigits)
-            }
-            return calibrationsInFullDigits
-        }
-
-        fun readValidCalibrationsPerLines(
-            puzzleInput: Stream<String>,
-        ): List<Int> {
-            val combinationForTheLine: MutableList<Int> = mutableListOf()
-            puzzleInput.toList().joinToString("\n").lines().forEach { line ->
-                val mixedDigitsAndTheirPositions: MutableSet<Pair<Int, String>> = mutableSetOf()
-                digitsInLetters.keys.forEach { digitAsLetter ->
-                    val itsAMatch = line.contains(digitAsLetter)
-                    if (itsAMatch) {
-                        val cursor = line.indexOf(digitAsLetter)
-                        val value = line.substring(cursor, cursor + digitAsLetter.length)
-                        val valueAsDigit = digitsInLetters[value]
-                        mixedDigitsAndTheirPositions.add(Pair(cursor, "$valueAsDigit"))
-                    }
-                }
-                val allDigits: List<Char> = line.toCharArray().filter { it.isDigit() }
-                if (allDigits.isNotEmpty()) {
-                    val firstDigit = Pair(line.indexOf(allDigits.first()), "${allDigits.first()}")
-                    mixedDigitsAndTheirPositions.add(firstDigit)
-                    if (allDigits.size > 1) {
-                        val lastDigit = Pair(line.lastIndexOf(allDigits.last()), "${allDigits.last()}")
-                        mixedDigitsAndTheirPositions.add(lastDigit)
-                    } else {
-                        val lastDigit = Pair(line.indexOf(allDigits.first()), "${allDigits.first()}")
-                        mixedDigitsAndTheirPositions.add(lastDigit)
-                    }
-                }
-                val orderedDigits = mixedDigitsAndTheirPositions.sortedBy { it.first }
-                val combinedCalibration = "${orderedDigits.first().second}${orderedDigits.last().second}"
-
-                combinationForTheLine.add(combinedCalibration.toInt())
-            }
-            return combinationForTheLine.toList()
-        }
-
+fun String.indexesOf(substr: String, ignoreCase: Boolean = true): List<Int> {
+    return this.let {
+        val regex = if (ignoreCase) Regex(substr, RegexOption.IGNORE_CASE) else Regex(substr)
+        regex.findAll(this).map { it.range.first }.toList()
     }
 }
