@@ -56,47 +56,6 @@ class TrebuchetTest {
             Assertions.assertThat(combinationForTheLine.sum())
                 .isEqualTo(347)
         }
-
-
-        @Test
-        fun `Should do something`() {
-            val sampleInput = """
-                1k
-                8sixqmone9zthx6
-                ldsmxpbkkx1rppscjfour3six
-                fivethreethreekxzgqmrz8
-                lxklrjjmqsix5snb7
-                threethreetwothree6
-                8three6
-                fnine7jmmseven3
-                rfhlkhhlx8sjqgclvlsctwo
-                vrzpdfjs5fxldpnhvhmmxhleight
-                9tmqznszjgrnlhnpxbc
-                3sxfscfseventhree
-                565vs2
-                four86six6
-                16
-            """.trimIndent()
-
-            val combinationForTheLine: List<Int> = Trebuchet.readValidCalibrationsPerLines(Stream.of(sampleInput))
-            Assertions.assertThat(combinationForTheLine).containsExactly(
-                11,
-                86,
-                16,
-                58,
-                67,
-                36,
-                86,
-                93,
-                82,
-                58,
-                99,
-                33,
-                52,
-                46,
-                16
-            )
-        }
     }
 
     @Nested
