@@ -12,7 +12,7 @@ internal class CounterOfCaloriesTest {
     @Nested
     inner class Sample {
        private val filePath = "src/test/resources/2022/day1"
-        private val caloriesMeasurements = BufferedReader(FileReader("$filePath/puzzleIn_Nico.txt")).lines().toList()
+        private val caloriesMeasurements = BufferedReader(FileReader("$filePath/sample.txt")).lines().toList()
 
         @Test
         fun `_part_1 - Should read the raw metrics and return max calories carried by an elf`(){

@@ -52,7 +52,6 @@ class TrebuchetTest {
                 76,
                 66
             )
-
             Assertions.assertThat(combinationForTheLine.sum())
                 .isEqualTo(347)
         }

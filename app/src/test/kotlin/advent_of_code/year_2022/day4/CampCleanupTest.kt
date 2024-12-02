@@ -44,11 +44,11 @@ internal class CampCleanupTest {
             @Test
             fun `Should read sample from file and count the overlapped sections`(){
                 val filePath = "src/test/resources/2022/day4"
-                val sample = BufferedReader(FileReader("$filePath/puzzleIn_Nico.txt")).lines().toList()
+                val sample = BufferedReader(FileReader("$filePath/puzzleInput.txt")).lines().toList()
 
                 val totalOverlappingSectors = campCleanup.countTotalFullyOverlapingSections(sample)
 
-                Assertions.assertThat(totalOverlappingSectors).isEqualTo(2)
+                Assertions.assertThat(totalOverlappingSectors).isEqualTo(582)
             }
         }
 

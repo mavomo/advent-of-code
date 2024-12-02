@@ -26,7 +26,7 @@ class AdventOfCode2021Test {
 
         @Test
         fun `Should count the number of times a depth measurement increases given a bigger puzzle`() {
-            val filePath = "src/test/resources/day1"
+            val filePath = "src/test/resources/2021/day1"
             val depthMeasurements =
                 BufferedReader(FileReader("$filePath/puzzleInput.txt")).lines().map { it.toInt() }.toList()
 
@@ -37,7 +37,7 @@ class AdventOfCode2021Test {
 
         @Test
         fun `_Prod_ should count the number of times the sum of measurements in a sliding window increases`() {
-            val filePath = "src/test/resources/day1"
+            val filePath = "src/test/resources/2021/day1"
             val report =
                 BufferedReader(FileReader("$filePath/puzzleInput.txt")).lines().map { it.toInt() }.toList()
 
@@ -177,7 +177,7 @@ class AdventOfCode2021Test {
 
         @Test
         fun `Production__ do move under water and return the horizontal position and the depth`(){
-            val filePath = "src/test/resources/day2"
+            val filePath = "src/test/resources/2021/day2"
             val instructions = BufferedReader(FileReader("$filePath/puzzleInput.txt")).lines().map { it }.toList()
             val pair = adventOfCode2021.getSubmarinPosition(instructions)
 
@@ -188,7 +188,7 @@ class AdventOfCode2021Test {
 
         @Test
         fun `Production_ do move under water but change the depth based on the aim`(){
-            val filePath = "src/test/resources/day2"
+            val filePath = "src/test/resources/2021/day2"
             val instructions = BufferedReader(FileReader("$filePath/puzzleInput.txt")).lines().map { it }.toList()
             val (horizontal, depth) = adjustMovesBasedOnTheAim(instructions)
 

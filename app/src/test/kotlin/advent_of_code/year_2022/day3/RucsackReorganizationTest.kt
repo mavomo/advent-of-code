@@ -41,11 +41,11 @@ internal class RucsackReorganizationTest {
             @Test
             fun `Should find the value  of the sum of all the priroties by item type reading the sample file`() {
                 val filePath = "src/test/resources/2022/day3"
-                val sample = BufferedReader(FileReader("$filePath/puzzleIn_Nico.txt")).lines().toList()
+                val sample = BufferedReader(FileReader("$filePath/puzzleInput.txt")).lines().toList()
 
                 val sumOfPriorities = rucsackReorganization.computeSumOfAllPriorities(sample)
 
-                assertThat(sumOfPriorities).isEqualTo(157)
+                assertThat(sumOfPriorities).isEqualTo(7908)
             }
         }
 

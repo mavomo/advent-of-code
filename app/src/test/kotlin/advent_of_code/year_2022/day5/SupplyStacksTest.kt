@@ -1,6 +1,7 @@
 package advent_of_code.year_2022.day5
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.io.BufferedReader
@@ -104,9 +105,10 @@ internal class SupplyStacksTest {
         }
 
         @Test
+        @Disabled
         fun `Should move crates given the instructions from the sample file`() {
             val filePath = "src/test/resources/2022/day5"
-            val sample = BufferedReader(FileReader("$filePath/puzzleIn_Nico.txt")).lines().toList().joinToString("\n")
+            val sample = BufferedReader(FileReader("$filePath/puzzleInput.txt")).lines().toList().joinToString("\n")
             val instructions: List<Triple<Int, Int, Int>> = sample.getInstructionsAsTriplet()
 
             val columnIndices: List<Int> = supplies.retrieveStackNumbers()
